@@ -33,9 +33,12 @@ class Gaussian():
         
         # Calculate the mean of the data set. Remember that the data set is stored in self.data
         # Change the value of the mean attribute to be the mean of the data set
-        # Return the mean of the data set           
-        return sum(self.data) / len(self.data) 
-                
+        # Return the mean of the data set  
+        if len(self.data) == 0:
+            self.mean = 0
+        else:
+            self.mean = sum(self.data) / len(self.data)        
+        return self.mean 
 
 
     def calculate_stdev(self, sample=True):
@@ -56,9 +59,14 @@ class Gaussian():
         #   If sample = True, this means the data is a sample. 
         #   Keep the value of sample in mind for calculating the standard deviation
         #
-        #   Make sure to update self.stdev and return the standard deviation as well    
+        #   Make sure to update self.stdev and return the standard deviation as well  
+        if sample:
+            len_data = len(self.data) - 1
+        else:
+            len_data = len(self.data)
+
         mean = self.calculate_mean()
-        variance = sum([((x - mean) ** 2) for x in self.data]) / len(self.data)
+        variance = sum([((x - mean) ** 2) for x in self.data]) / len_data
         return math.sqrt(variance)
         
 
@@ -90,8 +98,9 @@ class Gaussian():
         #       You can use the calculate_mean() method with self.calculate_mean()
         #   Update self.stdev with the standard deviation of the data_list. Use the 
         #       calcaulte_stdev() method.
+        self.data = data_list
         self.mean = self.calculate_mean()
-        self.stdev = self.calcaulte_stdev()
+        self.stdev = self.calculate_stdev(sample)
                 
         
     def plot_histogram(self):
@@ -107,7 +116,10 @@ class Gaussian():
         
         # Plot a histogram of the data_list using the matplotlib package.
         # Be sure to label the x and y axes and also give the chart a title
-        
+        plt.hist(self.data)
+        plt.title('Histogram of the instance variable data')
+        plt.xlabel('data')
+        plt.ylabel('count')
                 
         
     def pdf(self, x):
@@ -124,8 +136,9 @@ class Gaussian():
         # Calculate the probability density function of the Gaussian distribution
         # at the value x. You'll need to use self.stdev and self.mean to do the calculation
 
-        ex = math.exp(- math.pow(x - self.mean,2)/(2 * math.pow(self.stdev , 2)))
-        return (ex / sqrt(2 * math.pi * self.stdev))
+        ex = math.exp(- math.pow((x - self.mean),2)/(2 * math.pow(self.stdev , 2)))
+        return ex / (self.stdev * math.sqrt(2 * math.pi))
+
           
 
     def plot_histogram_pdf(self, n_spaces = 50):
